@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 const controller = require("../controllers/tmdbController");
 
 router.get("/search", controller.searchAll);

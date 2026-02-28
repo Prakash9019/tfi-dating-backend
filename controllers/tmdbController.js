@@ -19,7 +19,7 @@ exports.searchAll = async (req, res) => {
         query: q
       }
     });
-
+     console.log(result.data.results);
     const formatted = result.data.results
       .filter(i => i.media_type === "movie" || i.media_type === "person")
       .map(i => ({
@@ -72,8 +72,10 @@ exports.getMovieCast = async (req, res) => {
 // ⭐ Get ALL Movies of Actor (For Top 3 Screen)
 exports.getActorMovies = async (req, res) => {
   try {
+    console.log("hello")
+    console.log("Received request for actor movies with ID:", req.params);
     const actorId = req.params.id;
-
+    console.log("Fetching movies for actor ID:", actorId);  
     const response = await axios.get(
       `${TMDB}/person/${actorId}/movie_credits`,
       {

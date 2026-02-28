@@ -51,13 +51,17 @@ const connectDB = require("./config/db");
 const tmdbRoutes = require("./routes/tmdbRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-// connectDB();
+connectDB();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+const authRoutes = require("./routes/authRoutes");
+const spotifyRoutes = require("./routes/spotifyRoutes");
 
+app.use("/api/songs", spotifyRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/tmdb", tmdbRoutes);
 app.use("/api/users", userRoutes);
 

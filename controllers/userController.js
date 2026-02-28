@@ -1,69 +1,175 @@
 const User = require("../models/User");
 
-// Create user
+/*
+  🔒 IMPORTANT:
+  All routes using this controller MUST use auth middleware.
+  Because we are using req.user.id (from JWT).
+*/
+
+
+// ==============================
+// 👤 CREATE USER (Optional)
+// ==============================
 exports.createUser = async (req, res) => {
   try {
-    const user = await User.create({ name: req.body.name });
-    res.json(user);
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const user = await User.create({ name });
+
+    res.status(201).json(user);
   } catch (error) {
+    console.error("Create User Error:", error.message);
     res.status(500).json({ message: "User creation failed" });
   }
 };
 
-// Save bias actor
+
+// ==============================
+// 🎭 SAVE BIAS ACTOR
+// ==============================
 exports.saveBias = async (req, res) => {
-  const { userId, biasActor } = req.body;
+  try {
+    console.log("Received request to save bias actor with data:", req.body);
+    const userId = req.user.id;
+    const { biasActor } = req.body;
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { biasActor },
-    { new: true }
-  );
+    if (!biasActor) {
+      return res.status(400).json({ message: "Bias actor is required" });
+    }
 
-  res.json(user);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { biasActor },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Save Bias Error:", error.message);
+    res.status(500).json({ message: "Failed to save bias actor" });
+  }
 };
 
-// Save Top 3 Movies
+
+// ==============================
+// 🎬 SAVE TOP 3 MOVIES
+// ==============================
 exports.saveTopMovies = async (req, res) => {
-  const { userId, movies } = req.body;
+  try {
+    const userId = req.user.id;
+    const { movies } = req.body;
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { selectedTopMovies: movies },
-    { new: true }
-  );
+    if (!movies || !Array.isArray(movies)) {
+      return res.status(400).json({ message: "Movies array is required" });
+    }
 
-  res.json(user);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { selectedTopMovies: movies },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Save Top Movies Error:", error.message);
+    res.status(500).json({ message: "Failed to save top movies" });
+  }
 };
 
-// Save moods
+
+// ==============================
+// 🔥 SAVE MOODS
+// ==============================
 exports.saveMoods = async (req, res) => {
-  const { userId, moods } = req.body;
+  try {
+    const userId = req.user.id;
+    const { moods } = req.body;
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { moods },
-    { new: true }
-  );
+    if (!moods) {
+      return res.status(400).json({ message: "Moods data is required" });
+    }
 
-  res.json(user);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { moods },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Save Moods Error:", error.message);
+    res.status(500).json({ message: "Failed to save moods" });
+  }
 };
 
-// Save bio
+
+// ==============================
+// ✍ SAVE BIO
+// ==============================
 exports.saveBio = async (req, res) => {
-  const { userId, bio } = req.body;
+  try {
+    const userId = req.user.id;
+    const { bio } = req.body;
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { bio },
-    { new: true }
-  );
+    if (!bio) {
+      return res.status(400).json({ message: "Bio is required" });
+    }
 
-  res.json(user);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { bio },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Save Bio Error:", error.message);
+    res.status(500).json({ message: "Failed to save bio" });
+  }
 };
 
-// Get full profile
+
+// ==============================
+// 👤 GET PROFILE (Token Based)
+// ==============================
 exports.getProfile = async (req, res) => {
-  const user = await User.findById(req.params.id);
-  res.json(user);
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("Get Profile Error:", error.message);
+    res.status(500).json({ message: "Failed to fetch profile" });
+  }
 };

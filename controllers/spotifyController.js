@@ -35,13 +35,8 @@ const getSpotifyToken = async () => {
 // 🎵 Search Songs
 exports.searchSongs = async (req, res) => {
   try {
-    const query = req.query.q;
-
-    if (!query) {
-      return res.status(400).json({ message: "Query required" });
-    }
-
     const token = await getSpotifyToken();
+    console.log("Spotify Access Token:", token);
 
     const response = await axios.get(
       "https://api.spotify.com/v1/search",
@@ -50,27 +45,17 @@ exports.searchSongs = async (req, res) => {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          q: query,
+          q: req.query.q,
           type: "track",
           limit: 20,
         },
       }
     );
 
-    const tracks = response.data.tracks.items.map((track) => ({
-      id: track.id,
-      name: track.name,
-      artist: track.artists.map((a) => a.name).join(", "),
-      album: track.album.name,
-      image: track.album.images[0]?.url,
-      preview_url: track.preview_url,
-      spotify_url: track.external_urls.spotify,
-    }));
-
-    res.json(tracks);
+    res.json(response.data);
 
   } catch (error) {
-    console.error("Spotify Error:", error.response?.data || error.message);
-    res.status(500).json({ message: "Failed to search songs" });
+    console.error("FULL SPOTIFY ERROR:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed" });
   }
 };

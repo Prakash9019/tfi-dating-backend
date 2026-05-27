@@ -27,7 +27,30 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// Save Slogan and update recents
+exports.saveSlogan = async (req, res) => {
+  const {  slogan } = req.body;
+  const userId = req.user.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    user.slogan = slogan;
+    
+    // Add to recent slogans if it's new, keep max 5
+    if (slogan && !user.recentSlogans.includes(slogan)) {
+      user.recentSlogans.unshift(slogan);
+      if (user.recentSlogans.length > 5) {
+        user.recentSlogans.pop();
+      }
+    }
+
+    await user.save();
+    res.json({ success: true, slogan: user.slogan, recentSlogans: user.recentSlogans });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to save slogan" });
+  }
+};
 // ==============================
 // 🎭 SAVE BIAS ACTOR
 // ==============================

@@ -7,5 +7,6 @@ router.post("/top-movies", protect, controller.saveTopMovies);
 router.post("/moods", protect, controller.saveMoods);
 router.post("/bio", protect, controller.saveBio);
 router.get("/profile", protect, controller.getProfile);
-
+router.post("/slogan", protect,controller.saveSlogan);
 module.exports = router;
+

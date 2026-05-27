@@ -59,8 +59,10 @@ app.use(cors());
 app.use(express.json());
 const authRoutes = require("./routes/authRoutes");
 const spotifyRoutes = require("./routes/spotifyRoutes");
-
+const musicRoutes = require("./routes/musicRoutes");
+console.log("CLIENT_ID:", process.env.SPOTIFY_CLIENT_ID);
 app.use("/api/songs", spotifyRoutes);
+app.use("/api/music", musicRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/tmdb", tmdbRoutes);
 app.use("/api/users", userRoutes);
